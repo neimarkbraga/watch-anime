@@ -11,9 +11,9 @@ namespace WatchAnime.Controllers;
 [Authorize]
 [Controller]
 [Route("api/[controller]")]
-public class WatchItemController : Controller
+public class WatchItemController(MongoDBService mongoDBService) : Controller
 {
-    public struct CreateWatchItemBody
+    public struct ICreateWatchItemBody
     {
         public string Code { get; set; }
         public string Title { get; set; }
@@ -21,7 +21,7 @@ public class WatchItemController : Controller
         public int LastSeenEpisode { get; set; }
     }
 
-    public struct UpdateWatchItemBody
+    public struct IUpdateWatchItemBody
     {
         public string Code { get; set; }
         public string Title { get; set; }
@@ -29,12 +29,7 @@ public class WatchItemController : Controller
         public int LastSeenEpisode { get; set; }
     }
 
-    private readonly MongoDBService _mongoDBService;
-
-    public WatchItemController(MongoDBService mongoDBService)
-    {
-        _mongoDBService = mongoDBService;
-    }
+    private readonly MongoDBService _mongoDBService = mongoDBService;
 
     [HttpGet]
     public async Task<List<WatchItem>> GetWatchItems()
@@ -44,7 +39,7 @@ public class WatchItemController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateWatchItem([FromBody] CreateWatchItemBody body)
+    public async Task<IActionResult> CreateWatchItem([FromBody] ICreateWatchItemBody body)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var watchItem = new WatchItem
@@ -62,7 +57,7 @@ public class WatchItemController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateWatchItem(string id, [FromBody] UpdateWatchItemBody body)
+    public async Task<IActionResult> UpdateWatchItem(string id, [FromBody] IUpdateWatchItemBody body)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var filter = Builders<WatchItem>.Filter.Eq(i => i.Id, id) & Builders<WatchItem>.Filter.Eq(i => i.UserId, userId);

@@ -89,12 +89,12 @@ export const WatchView = () => {
 	};
 
 	return (
-		<Container maxWidth={false} sx={{ pt: 3 }}>
+		<Container maxWidth={false} sx={{ py: 2 }}>
 			{(() => {
 				if (!item) return <Fragment />;
 				return (
 					<Box>
-						<Stack direction="row" alignItems="center" spacing={1}>
+						<Stack direction="row" alignItems="center" spacing={0.5}>
 							<Typography variant="h4" color="primary">
 								{item.title}
 							</Typography>

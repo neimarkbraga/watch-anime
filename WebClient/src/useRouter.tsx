@@ -4,6 +4,8 @@ import { GoogleAuthCallback } from './pages/Redirect/GoogleAuthCallback/GoogleAu
 import { useSessionStore } from './stores/useSessionStore';
 import { LoginPage } from './pages/LoginPage/LoginPage';
 import { WatchPage } from './pages/WatchPage/WatchPage';
+import { SignUpPage } from './pages/SignUpPage/SignUpPage';
+import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
 
 const Protected = (props: { element: ReactNode }) => {
 	const { element } = props;
@@ -30,12 +32,24 @@ export const useRouter = () => {
 				element: <Protected element={<WatchPage />} />
 			},
 			{
+				path: '/account-settings',
+				element: <Protected element={<AccountSettingsPage />} />
+			},
+			{
 				path: '/login',
 				element: <LoginPage />
 			},
 			{
+				path: '/sign-up',
+				element: <SignUpPage />
+			},
+			{
 				path: '/redirect/google/auth-callback',
 				element: <GoogleAuthCallback />
+			},
+			{
+				path: '*',
+				element: <div />
 			}
 		];
 

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useLayoutEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
 	Stack,
@@ -14,15 +14,19 @@ import {
 import { WatchList } from './WatchList';
 import { WatchView } from './WatchView';
 import { WatchPageContext } from './WatchPageContext';
+import { useAppStore } from '../../stores/useAppStore';
 
 const drawerWidth = 300;
 
 export const WatchPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
 	const { breakpoints } = useTheme();
 	const isBigScreen = useMediaQuery(breakpoints.up('md'));
+
+	const isDrawerOpen = useAppStore((s) => s.isDrawerOpen);
+	const setIsDrawerOpen = useAppStore((s) => s.setIsDrawerOpen);
+	const setIsDrawerEnabled = useAppStore((s) => s.setIsDrawerEnabled);
 
 	const watchId = searchParams.get('id') ?? '';
 	const setWatchId = useCallback<Dispatch<SetStateAction<string>>>(
@@ -33,6 +37,13 @@ export const WatchPage = () => {
 		},
 		[watchId, searchParams]
 	);
+
+	useLayoutEffect(() => {
+		if (!isBigScreen) {
+			setIsDrawerEnabled(true);
+			return () => setIsDrawerEnabled(false);
+		}
+	}, [isBigScreen, setIsDrawerEnabled]);
 
 	return (
 		<WatchPageContext.Provider value={{ watchId, setWatchId }}>

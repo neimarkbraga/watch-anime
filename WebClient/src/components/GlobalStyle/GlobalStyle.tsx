@@ -9,6 +9,12 @@ export const GlobalStyle = () => {
 					minHeight: '100vh',
 					display: 'flex',
 					flexDirection: 'column'
+				},
+				fieldset: {
+					border: 'none',
+					borderWidth: 0,
+					padding: 0,
+					margin: 0
 				}
 			}}
 		/>

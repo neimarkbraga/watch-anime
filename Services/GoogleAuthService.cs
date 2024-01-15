@@ -6,19 +6,19 @@ namespace WatchAnime.Services;
 public class GoogleAuthService
 {
     public readonly GoogleAuthorizationCodeFlow flow;
-    public readonly string redirectUri;
+    public readonly string clientId;
+    private readonly string clientSecret;
+
 
     public GoogleAuthService(IConfiguration configuration)
     {
+        clientId = configuration.GetSection("Google:ClientId").Value ?? "";
+        clientSecret = configuration.GetSection("Google:ClientSecret").Value ?? "";
+
         flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
         {
-            ClientSecrets = new ClientSecrets
-            {
-                ClientId = configuration.GetSection("Google:ClientId").Value,
-                ClientSecret = configuration.GetSection("Google:ClientSecret").Value
-            },
+            ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
             Scopes = ["email", "openid", "profile"],
         });
-        redirectUri = configuration.GetSection("Google:RedirectUri").Value!;
     }
 }

@@ -1,5 +1,4 @@
 import { api } from '../libs/api/api';
-import { IUserAccount } from '../models/UserAccount';
 
 const getGoogleRedirectUri = () => {
 	return `${window.location.origin}/redirect/google/auth-callback`;
@@ -29,10 +28,14 @@ export const authQueries = {
 			return data;
 		}
 	}),
-	getSession: () => ({
-		key: ['auth', 'getSession'],
-		fn: async () => {
-			const { data } = await api.get<IUserAccount | null>('/api/Auth/GetSession');
+	loginWithEmailAndPassword: () => ({
+		key: ['auth', 'loginWithEmailAndPassword'],
+		fn: async (args: { email: string; password: string; captcha: string }) => {
+			const { email, password, captcha } = args;
+			const { data } = await api.post<{ accessToken: string }>(
+				'/api/Auth/LoginWithEmailAndPassword',
+				{ email, password, captcha }
+			);
 			return data;
 		}
 	})
