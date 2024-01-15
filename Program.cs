@@ -9,6 +9,9 @@ using WatchAnime.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoDBService>();
 builder.Services.AddSingleton<GoogleAuthService>();
@@ -84,7 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAnyOriginPolicy");
 
