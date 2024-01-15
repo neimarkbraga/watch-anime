@@ -15,6 +15,7 @@ export const SessionLoader = (props: PropsWithChildren) => {
 	const { key: getSessionKey, fn: getSessionFn } = authQueries.getSession();
 	const getSessionMutation = useMutation(getSessionKey, getSessionFn, {
 		onSuccess: (data) => setUser(data),
+		onError: () => setUser(null),
 		onSettled: () => setInitialized(true)
 	});
 
@@ -26,7 +27,7 @@ export const SessionLoader = (props: PropsWithChildren) => {
 		}
 	}, [token]);
 
-	if (!initialized || getSessionMutation.isLoading)
+	if (!initialized && getSessionMutation.isLoading)
 		return (
 			<Stack flex={1} alignItems="center" justifyContent="center">
 				<Box p={2} textAlign="center">
