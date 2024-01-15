@@ -9,17 +9,18 @@ import { WatchPageContext } from './WatchPageContext';
 const drawerWidth = 350;
 
 export const WatchPage = () => {
-	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [watchId, _setWatchId] = useState<string>(searchParams.get('id') ?? '');
+	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
 	const { breakpoints } = useTheme();
 	const isBigScreen = useMediaQuery(breakpoints.up('md'));
 
-	const watchId = searchParams.get('id') ?? '';
 	const setWatchId = useCallback<Dispatch<SetStateAction<string>>>(
 		(value) => {
 			const newWatchId = typeof value === 'function' ? value(watchId) : value;
+			_setWatchId(newWatchId);
 			searchParams.set('id', newWatchId);
 			setSearchParams(searchParams, { replace: true });
 		},
