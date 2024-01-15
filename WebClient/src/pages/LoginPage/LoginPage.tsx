@@ -1,13 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { useStore } from 'zustand';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { authQueries } from '../../queries/authQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
-import { sessionStore } from '../../stores/useSessionStore';
+import { useSessionStore } from '../../stores/useSessionStore';
 
 export const LoginPage = () => {
-	const isLoggedIn = useStore(sessionStore, (s) => !!s.user);
+	const isLoggedIn = useSessionStore((s) => !!s.user);
 
 	const { key: getGoogleAuthURIKey, fn: getGoogleAuthURIFn } = authQueries.getGoogleAuthURI();
 	const getGoogleAuthURIQuery = useQuery(getGoogleAuthURIKey, getGoogleAuthURIFn);

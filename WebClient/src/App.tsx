@@ -6,7 +6,9 @@ import { GlobalStyle } from './components/GlobalStyle/GlobalStyle';
 import { darkTheme } from './themes/darkTheme';
 import { queryClient } from './queryClient';
 import { useRouter } from './useRouter';
-import { SessionLoader } from './components/SessionLoader/SessionLoader';
+import { SessionProvider } from './providers/SessionProvider/SessionProvider';
+import { MainHeader } from './components/MainHeader/MainHeader';
+import { DialogProvider } from './providers/DialogProvider';
 
 function App() {
 	const router = useRouter();
@@ -15,9 +17,12 @@ function App() {
 			<ThemeProvider theme={darkTheme}>
 				<CssBaseline />
 				<GlobalStyle />
-				<SessionLoader>
-					<RouterProvider router={router} />
-				</SessionLoader>
+				<DialogProvider>
+					<SessionProvider>
+						<MainHeader />
+						<RouterProvider router={router} />
+					</SessionProvider>
+				</DialogProvider>
 			</ThemeProvider>
 		</QueryClientProvider>
 	);

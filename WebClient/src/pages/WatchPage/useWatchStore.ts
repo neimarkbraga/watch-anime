@@ -1,4 +1,4 @@
-import { createStore } from 'zustand';
+import { create } from 'zustand';
 import { IWatchItem } from '../../models/WatchItem';
 
 export interface IWatchStore {
@@ -7,7 +7,7 @@ export interface IWatchStore {
 	setItems: (items: IWatchItem[]) => void;
 }
 
-export const watchStore = createStore<IWatchStore>((setState, getState) => ({
+export const useWatchStore = create<IWatchStore>((setState, getState) => ({
 	items: [],
 	getItems: () => {
 		const { items } = getState();

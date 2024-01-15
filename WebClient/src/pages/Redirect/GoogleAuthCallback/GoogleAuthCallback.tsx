@@ -1,17 +1,16 @@
 import { Fragment, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { useStore } from 'zustand';
 import { Stack, Box, CircularProgress, Typography, Alert } from '@mui/material';
 import { getErrorMessage } from '../../../libs/utils/getErrorMessage';
 import { authQueries } from '../../../queries/authQueries';
-import { sessionStore } from '../../../stores/useSessionStore';
+import { useSessionStore } from '../../../stores/useSessionStore';
 
 export const GoogleAuthCallback = () => {
 	const [searchParams] = useSearchParams();
 
 	const navigate = useNavigate();
-	const setToken = useStore(sessionStore, (s) => s.setToken);
+	const setToken = useSessionStore((s) => s.setToken);
 
 	const query = authQueries.loginWithGoogleAuthCode();
 	const mutation = useMutation(query.fn, {

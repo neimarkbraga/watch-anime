@@ -1,6 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useStore } from 'zustand';
 import {
 	Button,
 	Dialog,
@@ -14,7 +13,7 @@ import { LoadingButton } from '@mui/lab';
 import { IWatchItem } from '../../models/WatchItem';
 import { watchItemQueries } from '../../queries/watchItemQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
-import { watchStore } from './watchStore';
+import { useWatchStore } from './useWatchStore';
 
 export interface IEditWatchItemDialogProps {
 	itemId: string;
@@ -29,7 +28,7 @@ export const EditWatchItemDialog = (props: IEditWatchItemDialogProps) => {
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 
-	const item = useStore(watchStore, (s) => s.items.find((i) => i.id === itemId) ?? null);
+	const item = useWatchStore((s) => s.items.find((i) => i.id === itemId) ?? null);
 
 	const { key: updateItemKey, fn: updateItemFn } = watchItemQueries.updateWatchItem({ id: itemId });
 	const updateItemMutation = useMutation(updateItemKey, updateItemFn, {

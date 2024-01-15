@@ -1,13 +1,13 @@
 import { Fragment, useState } from 'react';
+import { useMutation } from 'react-query';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert as MenuIcon } from '@mui/icons-material';
 import { IWatchItem } from '../../models/WatchItem';
 import { EditWatchItemDialog } from './EditWatchItemDialog';
-import { useStore } from 'zustand';
-import { watchStore } from './watchStore';
-import { useMutation } from 'react-query';
+import { useWatchStore } from './useWatchStore';
 import { watchItemQueries } from '../../queries/watchItemQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
+import { useDialog } from '../../providers/DialogProvider';
 
 export interface IWatchItemMenuProps {
 	watchItem: IWatchItem;
@@ -18,8 +18,9 @@ export const WatchItemMenu = (props: IWatchItemMenuProps) => {
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 	const [isEditActive, setIsEditActive] = useState<boolean>(false);
 
-	const getItems = useStore(watchStore, (s) => s.getItems);
-	const setItems = useStore(watchStore, (s) => s.setItems);
+	const { confirm } = useDialog();
+	const getItems = useWatchStore((s) => s.getItems);
+	const setItems = useWatchStore((s) => s.setItems);
 
 	const { key: deleteKey, fn: deleteFn } = watchItemQueries.deleteWatchItem({ id: watchItem.id });
 	const deleteItemMutation = useMutation(deleteKey, deleteFn, {
@@ -51,9 +52,11 @@ export const WatchItemMenu = (props: IWatchItemMenuProps) => {
 				<MenuItem
 					sx={({ palette }) => ({ color: palette.error.main })}
 					disabled={deleteItemMutation.isLoading}
-					onClick={() => {
+					onClick={async () => {
 						setMenuAnchor(null);
-						const confirmed = window.confirm(`Do you want to delete ${watchItem.title}?`);
+						const confirmed = await confirm(`Do you want to delete ${watchItem.title}?`, {
+							confirmLabel: 'Delete'
+						});
 						if (confirmed) deleteItemMutation.mutate();
 					}}
 				>

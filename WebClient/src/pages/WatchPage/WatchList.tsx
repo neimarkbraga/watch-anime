@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useStore } from 'zustand';
 import {
 	Alert,
 	Box,
@@ -12,7 +11,7 @@ import {
 	Skeleton
 } from '@mui/material';
 import { Movie as AnimeIcon, AddCircle as AddIcon } from '@mui/icons-material';
-import { watchStore } from './watchStore';
+import { useWatchStore } from './useWatchStore';
 import { watchItemQueries } from '../../queries/watchItemQueries';
 import { AddWatchItemDialog } from './AddWatchItemDialog';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
@@ -23,9 +22,9 @@ export const WatchList = () => {
 
 	const { watchId, setWatchId } = useWatchPageContext();
 
-	const items = useStore(watchStore, (s) => s.items);
-	const getItems = useStore(watchStore, (s) => s.getItems);
-	const setItems = useStore(watchStore, (s) => s.setItems);
+	const items = useWatchStore((s) => s.items);
+	const getItems = useWatchStore((s) => s.getItems);
+	const setItems = useWatchStore((s) => s.setItems);
 
 	const { key: getItemsKey, fn: getItemsFn } = watchItemQueries.getWatchItems();
 	const getItemsQuery = useQuery(getItemsKey, getItemsFn, {
@@ -59,18 +58,28 @@ export const WatchList = () => {
 								<ListItemButton
 									key={item.id}
 									onClick={() => setWatchId(item.id)}
-									selected={item.id === watchId}
+									sx={({ palette }) => ({
+										'&:after': {
+											content: '""',
+											display: 'block',
+											position: 'absolute',
+											backgroundColor: item.id === watchId ? palette.primary.main : 'none',
+											width: '2.5px',
+											bottom: 0,
+											right: 0,
+											top: 0
+										}
+									})}
 									disableRipple
 								>
-									<ListItemAvatar>
+									<ListItemAvatar sx={{ minWidth: 0, mr: 2 }}>
 										<AnimeIcon />
 									</ListItemAvatar>
 									<ListItemText primary={item.title} secondary={item.description} />
 								</ListItemButton>
 							))}
-
 							<ListItemButton onClick={() => setIsAddItemOpen(true)}>
-								<ListItemAvatar>
+								<ListItemAvatar sx={{ minWidth: 0, mr: 2 }}>
 									<AddIcon />
 								</ListItemAvatar>
 								<ListItemText primary="Add Anime" secondary="Add new anime to watch list" />

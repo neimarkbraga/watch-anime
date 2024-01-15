@@ -8,8 +8,7 @@ export const GlobalStyle = () => {
 					width: '100%',
 					minHeight: '100vh',
 					display: 'flex',
-					flexDirection: 'column',
-					overflow: 'auto'
+					flexDirection: 'column'
 				}
 			}}
 		/>

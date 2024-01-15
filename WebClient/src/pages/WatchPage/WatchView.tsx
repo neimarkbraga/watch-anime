@@ -1,6 +1,5 @@
 import { Fragment, PropsWithChildren, useMemo, useRef } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useStore } from 'zustand';
 import {
 	Alert,
 	Box,
@@ -13,7 +12,7 @@ import {
 	Stack,
 	Typography
 } from '@mui/material';
-import { watchStore } from './watchStore';
+import { useWatchStore } from './useWatchStore';
 import { utilsQueries } from '../../queries/utilsQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
 import { watchItemQueries } from '../../queries/watchItemQueries';
@@ -52,9 +51,9 @@ const VideoPlayer = (props: { src: string }) => {
 export const WatchView = () => {
 	const { watchId } = useWatchPageContext();
 
-	const item = useStore(watchStore, (s) => s.items.find((i) => i.id === watchId) ?? null);
-	const getItems = useStore(watchStore, (s) => s.getItems);
-	const setItems = useStore(watchStore, (s) => s.setItems);
+	const item = useWatchStore((s) => s.items.find((i) => i.id === watchId) ?? null);
+	const getItems = useWatchStore((s) => s.getItems);
+	const setItems = useWatchStore((s) => s.setItems);
 
 	const id = item?.id ?? '';
 	const code = item?.code ?? '';
@@ -99,6 +98,7 @@ export const WatchView = () => {
 							<Typography variant="h4" color="primary">
 								{item.title}
 							</Typography>
+							<Box flex={1} />
 							<WatchItemMenu watchItem={item} />
 						</Stack>
 						<Typography fontSize="small" color="text.secondary">
@@ -111,24 +111,6 @@ export const WatchView = () => {
 						<Box pt={2}>
 							<Box width="100%" maxWidth="1200px">
 								<Stack spacing={1}>
-									<Box sx={{ overflow: 'auto' }}>
-										{!!sourceUrl && (
-											<Box sx={{ whiteSpace: 'nowrap' }}>
-												Source Url:&nbsp;
-												<Link target="_blank" href={sourceUrl}>
-													{sourceUrl}
-												</Link>
-											</Box>
-										)}
-										{!!videoUrl && !getHtmlQuery.error && (
-											<Box sx={{ whiteSpace: 'nowrap' }}>
-												Video Url:&nbsp;
-												<Link target="_blank" href={videoUrl}>
-													{videoUrl}
-												</Link>
-											</Box>
-										)}
-									</Box>
 									{(() => {
 										if (getHtmlQuery.isLoading)
 											return (
@@ -175,6 +157,25 @@ export const WatchView = () => {
 											</Button>
 										</Stack>
 									)}
+
+									<Box sx={{ overflow: 'auto', textAlign: 'center' }}>
+										{!!sourceUrl && (
+											<Box sx={{ whiteSpace: 'nowrap' }}>
+												Source Url:&nbsp;
+												<Link target="_blank" href={sourceUrl}>
+													{sourceUrl}
+												</Link>
+											</Box>
+										)}
+										{!!videoUrl && !getHtmlQuery.error && (
+											<Box sx={{ whiteSpace: 'nowrap' }}>
+												Video Url:&nbsp;
+												<Link target="_blank" href={videoUrl}>
+													{videoUrl}
+												</Link>
+											</Box>
+										)}
+									</Box>
 								</Stack>
 							</Box>
 						</Box>
