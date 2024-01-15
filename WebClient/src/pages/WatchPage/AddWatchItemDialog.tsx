@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import { useStore } from 'zustand';
 import {
 	Button,
 	Dialog,
@@ -11,36 +10,32 @@ import {
 	TextField
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { IWatchItem } from '../../models/WatchItem';
 import { watchItemQueries } from '../../queries/watchItemQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
-import { watchStore } from './watchStore';
 
 export interface IAddWatchItemDialogProps {
 	open: boolean;
 	onClose: () => void;
+	onCreated: (watchItem: IWatchItem) => void;
 }
 
 export const AddWatchItemDialog = (props: IAddWatchItemDialogProps) => {
-	const { open, onClose } = props;
+	const { open, onClose, onCreated } = props;
 
 	const [code, setCode] = useState<string>('');
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 
-	const getItems = useStore(watchStore, (s) => s.getItems);
-	const setItems = useStore(watchStore, (s) => s.setItems);
-	const setActiveItemId = useStore(watchStore, (s) => s.setActiveItemId);
-
 	const { key: createItemKey, fn: createItemFn } = watchItemQueries.createWatchItem();
 	const createItemMutation = useMutation(createItemKey, createItemFn, {
-		onSuccess: (item) => {
-			setItems([...getItems(), item]);
-			setActiveItemId(item.id);
-			onClose();
+		onSuccess: (data) => {
+			onCreated(data);
+			setCode('');
+			setTitle('');
+			setDescription('');
 		},
-		onError: (error) => {
-			alert(`Error Creating: ${getErrorMessage(error)}`);
-		}
+		onError: (error) => alert(`Error Creating: ${getErrorMessage(error)}`)
 	});
 
 	return (

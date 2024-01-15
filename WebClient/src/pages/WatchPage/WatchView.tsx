@@ -17,6 +17,8 @@ import { watchStore } from './watchStore';
 import { utilsQueries } from '../../queries/utilsQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
 import { watchItemQueries } from '../../queries/watchItemQueries';
+import { useWatchPageContext } from './WatchPageContext';
+import { WatchItemMenu } from './WatchItemMenu';
 
 const PlayerWrapper = (props: PropsWithChildren) => {
 	const { children } = props;
@@ -48,7 +50,9 @@ const VideoPlayer = (props: { src: string }) => {
 };
 
 export const WatchView = () => {
-	const item = useStore(watchStore, (s) => s.items.find((i) => i.id === s.activeItemId) ?? null);
+	const { watchId } = useWatchPageContext();
+
+	const item = useStore(watchStore, (s) => s.items.find((i) => i.id === watchId) ?? null);
 	const getItems = useStore(watchStore, (s) => s.getItems);
 	const setItems = useStore(watchStore, (s) => s.setItems);
 
@@ -95,13 +99,12 @@ export const WatchView = () => {
 							<Typography variant="h4" color="primary">
 								{item.title}
 							</Typography>
-							<Typography fontSize="small" color="text.secondary">
-								&bull;
-							</Typography>
-							<Typography fontSize="small" color="text.secondary">
-								{item.code}
-							</Typography>
+							<WatchItemMenu watchItem={item} />
 						</Stack>
+						<Typography fontSize="small" color="text.secondary">
+							{item.code}
+						</Typography>
+
 						{!!item.description && (
 							<Typography color="text.secondary">{item.description}</Typography>
 						)}
@@ -117,14 +120,12 @@ export const WatchView = () => {
 												</Link>
 											</Box>
 										)}
-										{!getHtmlQuery.error && (
+										{!!videoUrl && !getHtmlQuery.error && (
 											<Box sx={{ whiteSpace: 'nowrap' }}>
 												Video Url:&nbsp;
-												{videoUrl && (
-													<Link target="_blank" href={videoUrl}>
-														{videoUrl}
-													</Link>
-												)}
+												<Link target="_blank" href={videoUrl}>
+													{videoUrl}
+												</Link>
 											</Box>
 										)}
 									</Box>

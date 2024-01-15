@@ -45,9 +45,10 @@ export const WatchAppBar = (props: IWatchAppBarProps) => {
 								</IconButton>
 							</Box>
 						)}
-						<Box>
-							<Typography>Watch Anime</Typography>
-						</Box>
+						<Stack direction="row" alignItems="center" spacing={0.5}>
+							<img src="/images/watch-anime-logo.png" alt="Watch Anime" height={35} />
+							<Typography variant="h6">Watch Anime</Typography>
+						</Stack>
 						<Box flex={1}></Box>
 						{!!user && (
 							<Box>

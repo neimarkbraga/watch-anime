@@ -11,6 +11,7 @@ import {
 	TextField
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { IWatchItem } from '../../models/WatchItem';
 import { watchItemQueries } from '../../queries/watchItemQueries';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
 import { watchStore } from './watchStore';
@@ -18,29 +19,22 @@ import { watchStore } from './watchStore';
 export interface IEditWatchItemDialogProps {
 	itemId: string;
 	onClose: () => void;
+	onUpdated: (watchItem: IWatchItem) => void;
 }
 
 export const EditWatchItemDialog = (props: IEditWatchItemDialogProps) => {
-	const { itemId, onClose } = props;
+	const { itemId, onClose, onUpdated } = props;
 
 	const [code, setCode] = useState<string>('');
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 
 	const item = useStore(watchStore, (s) => s.items.find((i) => i.id === itemId) ?? null);
-	const getItems = useStore(watchStore, (s) => s.getItems);
-	const setItems = useStore(watchStore, (s) => s.setItems);
 
-	const id = item?.id ?? '';
-	const { key: updateItemKey, fn: updateItemFn } = watchItemQueries.updateWatchItem({ id });
+	const { key: updateItemKey, fn: updateItemFn } = watchItemQueries.updateWatchItem({ id: itemId });
 	const updateItemMutation = useMutation(updateItemKey, updateItemFn, {
-		onSuccess: () => {
-			setItems(
-				getItems().map((v) => {
-					return v.id === id ? { ...v, code, title, description } : v;
-				})
-			);
-			onClose();
+		onSuccess: (result, args) => {
+			if (item) onUpdated({ ...item, ...args.data });
 		},
 		onError: (error) => {
 			alert(`Error Updating: ${getErrorMessage(error)}`);

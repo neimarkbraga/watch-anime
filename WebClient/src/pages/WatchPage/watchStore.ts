@@ -5,9 +5,6 @@ export interface IWatchStore {
 	items: IWatchItem[];
 	getItems: () => IWatchItem[];
 	setItems: (items: IWatchItem[]) => void;
-
-	activeItemId: string;
-	setActiveItemId: (activeItemId: string) => void;
 }
 
 export const watchStore = createStore<IWatchStore>((setState, getState) => ({
@@ -18,10 +15,5 @@ export const watchStore = createStore<IWatchStore>((setState, getState) => ({
 	},
 	setItems: (items) => {
 		setState({ items });
-	},
-
-	activeItemId: '',
-	setActiveItemId: (activeItemId) => {
-		setState({ activeItemId });
 	}
 }));
