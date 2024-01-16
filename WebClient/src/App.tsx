@@ -1,27 +1,28 @@
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from 'react-query';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { GlobalStyle } from './components/GlobalStyle/GlobalStyle';
 import { darkTheme } from './themes/darkTheme';
 import { queryClient } from './queryClient';
-import { useRouter } from './useRouter';
+import { DialogProvider } from './providers/DialogProvider';
 import { SessionProvider } from './providers/SessionProvider/SessionProvider';
 import { MainHeader } from './components/MainHeader/MainHeader';
-import { DialogProvider } from './providers/DialogProvider';
+import { AppRoutes } from './routes/AppRoutes';
 
 function App() {
-	const router = useRouter();
 	return (
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider theme={darkTheme}>
 				<CssBaseline />
 				<GlobalStyle />
 				<DialogProvider>
-					<SessionProvider>
-						<MainHeader />
-						<RouterProvider router={router} />
-					</SessionProvider>
+					<BrowserRouter>
+						<SessionProvider>
+							<MainHeader />
+							<AppRoutes />
+						</SessionProvider>
+					</BrowserRouter>
 				</DialogProvider>
 			</ThemeProvider>
 		</QueryClientProvider>

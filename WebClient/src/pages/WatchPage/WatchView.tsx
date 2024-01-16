@@ -68,7 +68,10 @@ export const WatchView = () => {
 	}, [code, episode]);
 
 	const { key: getHtmlKey, fn: getHtmlFn } = utilsQueries.getHtmlContent({ url: sourceUrl ?? '' });
-	const getHtmlQuery = useQuery(getHtmlKey, getHtmlFn);
+	const getHtmlQuery = useQuery(getHtmlKey, getHtmlFn, {
+		cacheTime: Infinity,
+		staleTime: Infinity
+	});
 
 	const videoUrl = useMemo(() => {
 		const dummy = document.createElement('div');

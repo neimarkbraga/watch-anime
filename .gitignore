@@ -10,3 +10,4 @@ obj/
 
 # Ignore development app settings
 appsettings.Development.json
+appsettings.Production.json

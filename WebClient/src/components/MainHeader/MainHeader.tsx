@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	AppBar,
 	Avatar,
@@ -27,6 +28,8 @@ export const MainHeader = () => {
 	const { breakpoints } = useTheme();
 	const isBigScreen = useMediaQuery(breakpoints.up('sm'));
 
+	const navigate = useNavigate();
+
 	const isDrawerOpen = useAppStore((s) => s.isDrawerOpen);
 	const setIsDrawerOpen = useAppStore((s) => s.setIsDrawerOpen);
 	const isDrawerEnabled = useAppStore((s) => s.isDrawerEnabled);
@@ -54,7 +57,7 @@ export const MainHeader = () => {
 								alt="Watch Anime"
 								height={35}
 								style={{ cursor: 'pointer' }}
-								onClick={() => (location.href = '/')}
+								onClick={() => navigate('/')}
 							/>
 							{isBigScreen && <Typography variant="h6">Watch Anime</Typography>}
 						</Stack>
@@ -92,7 +95,7 @@ export const MainHeader = () => {
 				<MenuItem
 					onClick={() => {
 						setMenuAnchor(null);
-						window.location.href = '/account-settings';
+						navigate('/account-settings');
 					}}
 				>
 					Account Settings

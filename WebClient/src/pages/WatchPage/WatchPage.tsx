@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useLayoutEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
 	Stack,
 	Box,
@@ -19,23 +19,22 @@ import { useAppStore } from '../../stores/useAppStore';
 const drawerWidth = 300;
 
 export const WatchPage = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
-
 	const { breakpoints } = useTheme();
 	const isBigScreen = useMediaQuery(breakpoints.up('md'));
+
+	const { watchId = '' } = useParams<{ watchId: string }>();
+	const navigate = useNavigate();
 
 	const isDrawerOpen = useAppStore((s) => s.isDrawerOpen);
 	const setIsDrawerOpen = useAppStore((s) => s.setIsDrawerOpen);
 	const setIsDrawerEnabled = useAppStore((s) => s.setIsDrawerEnabled);
 
-	const watchId = searchParams.get('id') ?? '';
 	const setWatchId = useCallback<Dispatch<SetStateAction<string>>>(
 		(value) => {
 			const newWatchId = typeof value === 'function' ? value(watchId) : value;
-			searchParams.set('id', newWatchId);
-			setSearchParams(searchParams, { replace: true });
+			navigate(`/watch/${newWatchId}`, { replace: true });
 		},
-		[watchId, searchParams]
+		[watchId]
 	);
 
 	useLayoutEffect(() => {

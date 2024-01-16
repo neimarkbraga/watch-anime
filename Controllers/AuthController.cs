@@ -101,7 +101,7 @@ public class AuthController(IConfiguration configuration, MongoDBService mongoDB
             new(JwtRegisteredClaimNames.FamilyName, userAccount.LastName!),
         };
 
-        var expiration = DateTime.Now.AddMinutes(120);
+        var expiration = DateTime.Now.AddDays(1);
 
         var Sectoken = new JwtSecurityToken(issuer, issuer, claims: claims, expires: expiration, signingCredentials: credentials);
 

@@ -1,13 +1,13 @@
 import { Fragment, useRef, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import ReCaptcha from 'react-google-recaptcha';
 import { useMutation, useQuery } from 'react-query';
 import { Alert, Box, Button, CircularProgress, Stack, TextField, Typography } from '@mui/material';
+import { Google as GoogleIcon } from '@mui/icons-material';
 import { TextDivider } from '../../components/TextDivider/TextDivider';
 import { authQueries } from '../../queries/authQueries';
 import { useSessionStore } from '../../stores/useSessionStore';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
-import { Google as GoogleIcon } from '@mui/icons-material';
 
 export const LoginPage = () => {
 	const [email, setEmail] = useState<string>('');
@@ -18,6 +18,8 @@ export const LoginPage = () => {
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string>('');
+
+	const navigate = useNavigate();
 
 	const isLoggedIn = useSessionStore((s) => !!s.user);
 	const setToken = useSessionStore((s) => s.setToken);
@@ -45,7 +47,7 @@ export const LoginPage = () => {
 
 	return (
 		<Box display="flex" flex={1} alignItems="center" justifyContent="center" overflow="hidden">
-			<Box width="100%" maxWidth="400px">
+			<Box width="100%" maxWidth="400px" p={3}>
 				<Stack spacing={2}>
 					<Box textAlign="center">
 						<img
@@ -119,6 +121,8 @@ export const LoginPage = () => {
 								>
 									Login
 								</Button>
+
+								<Button onClick={() => navigate('/sign-up')}>Create an Account</Button>
 							</Stack>
 						</fieldset>
 					</form>

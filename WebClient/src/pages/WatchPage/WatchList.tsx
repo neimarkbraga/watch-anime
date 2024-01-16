@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useLayoutEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import {
 	Alert,
@@ -30,6 +30,10 @@ export const WatchList = () => {
 	const getItemsQuery = useQuery(getItemsKey, getItemsFn, {
 		onSuccess: (data) => setItems(data)
 	});
+
+	useLayoutEffect(() => {
+		if (items.length && !watchId) setWatchId(items[0].id);
+	}, [items.length, watchId]);
 
 	return (
 		<Fragment>

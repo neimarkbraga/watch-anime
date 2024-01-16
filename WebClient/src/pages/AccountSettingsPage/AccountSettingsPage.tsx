@@ -44,6 +44,8 @@ export const AccountSettingsPage = () => {
 		}
 	});
 
+	const passwordMismatch = !!newPassword && newPassword !== confirmNewPassword;
+
 	useLayoutEffect(() => {
 		setFirstName(user?.firstName ?? '');
 		setLastName(user?.lastName ?? '');
@@ -142,7 +144,7 @@ export const AccountSettingsPage = () => {
 									<Box>
 										<TextField
 											type="password"
-											label="New Passord"
+											label="New Password"
 											size="small"
 											value={newPassword}
 											onChange={(e) => setNewPassword(e.target.value)}
@@ -154,12 +156,14 @@ export const AccountSettingsPage = () => {
 										<Box>
 											<TextField
 												type="password"
-												label="Confirm New Passord"
+												label="Confirm New Password"
 												size="small"
 												value={confirmNewPassword}
 												onChange={(e) => setConfirmNewPassword(e.target.value)}
 												fullWidth
 												required
+												error={passwordMismatch}
+												helperText={passwordMismatch ? "Password don't match" : ''}
 											/>
 										</Box>
 									)}
@@ -174,11 +178,7 @@ export const AccountSettingsPage = () => {
 										<Button
 											type="submit"
 											variant="contained"
-											disabled={
-												changePasswordMutation.isLoading ||
-												!newPassword ||
-												newPassword !== confirmNewPassword
-											}
+											disabled={changePasswordMutation.isLoading || passwordMismatch}
 											startIcon={
 												changePasswordMutation.isLoading && (
 													<CircularProgress size="1em" color="inherit" />

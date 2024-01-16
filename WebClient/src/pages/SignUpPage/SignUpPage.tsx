@@ -34,9 +34,11 @@ export const SignUpPage = () => {
 		}
 	});
 
+	const passwordMismatch = !!password && password !== confirmPassword;
+
 	return (
 		<Box display="flex" flex={1} alignItems="center" justifyContent="center" overflow="hidden">
-			<Box width="100%" maxWidth="400px">
+			<Box width="100%" maxWidth="400px" p={3}>
 				<Stack spacing={2}>
 					<Box textAlign="center">
 						<img
@@ -86,6 +88,8 @@ export const SignUpPage = () => {
 										size="small"
 										value={confirmPassword}
 										onChange={(e) => setConfirmPassword(e.target.value)}
+										error={passwordMismatch}
+										helperText={passwordMismatch ? "Password don't match" : ''}
 										required
 									/>
 								)}
@@ -124,14 +128,7 @@ export const SignUpPage = () => {
 									type="submit"
 									variant="contained"
 									size="large"
-									disabled={
-										createAccountMutation.isLoading ||
-										!email ||
-										!password ||
-										password !== confirmPassword ||
-										!firstName ||
-										!lastName
-									}
+									disabled={createAccountMutation.isLoading || passwordMismatch}
 									startIcon={
 										createAccountMutation.isLoading && (
 											<CircularProgress size="1em" color="inherit" />
@@ -140,6 +137,8 @@ export const SignUpPage = () => {
 								>
 									Sign Up
 								</Button>
+
+								<Button onClick={() => navigate('/login')}>Go to Login</Button>
 							</Stack>
 						</fieldset>
 					</form>
