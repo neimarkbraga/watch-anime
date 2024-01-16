@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useLayoutEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useQueryClient } from 'react-query';
 import {
 	Stack,
 	Box,
@@ -15,6 +16,7 @@ import { WatchList } from './WatchList';
 import { WatchView } from './WatchView';
 import { WatchPageContext } from './WatchPageContext';
 import { useAppStore } from '../../stores/useAppStore';
+import { watchItemQueries } from '../../queries/watchItemQueries';
 
 const drawerWidth = 300;
 
@@ -24,6 +26,7 @@ export const WatchPage = () => {
 
 	const { watchId = '' } = useParams<{ watchId: string }>();
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const isDrawerOpen = useAppStore((s) => s.isDrawerOpen);
 	const setIsDrawerOpen = useAppStore((s) => s.setIsDrawerOpen);
@@ -43,6 +46,12 @@ export const WatchPage = () => {
 			return () => setIsDrawerEnabled(false);
 		}
 	}, [isBigScreen, setIsDrawerEnabled]);
+
+	useLayoutEffect(() => {
+		queryClient.removeQueries({
+			queryKey: watchItemQueries.getWatchItems().key
+		});
+	}, []);
 
 	return (
 		<WatchPageContext.Provider value={{ watchId, setWatchId }}>

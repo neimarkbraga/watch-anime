@@ -28,6 +28,8 @@ export const WatchList = () => {
 
 	const { key: getItemsKey, fn: getItemsFn } = watchItemQueries.getWatchItems();
 	const getItemsQuery = useQuery(getItemsKey, getItemsFn, {
+		cacheTime: Infinity,
+		staleTime: Infinity,
 		onSuccess: (data) => setItems(data)
 	});
 

@@ -51,7 +51,9 @@ export const EditWatchItemDialog = (props: IEditWatchItemDialogProps) => {
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
-					updateItemMutation.mutate({ data: { code, title, description, lastSeenEpisode: 1 } });
+					updateItemMutation.mutate({
+						data: { code, title, description, lastSeenEpisode: item?.lastSeenEpisode ?? 1 }
+					});
 				}}
 			>
 				<DialogTitle>Edit {item?.title ?? 'Watch Item'}</DialogTitle>
