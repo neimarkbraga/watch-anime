@@ -19,22 +19,29 @@ import { watchItemQueries } from '../../queries/watchItemQueries';
 import { useWatchPageContext } from './WatchPageContext';
 import { WatchItemMenu } from './WatchItemMenu';
 
-const PlayerWrapper = (props: PropsWithChildren) => {
-	const { children } = props;
-	return <Box sx={{ width: '100%', height: '360px' }}>{children}</Box>;
-	// return (
-	// 	<Box sx={{ position: 'relative', width: '100%', paddingTop: '45%' }}>
-	// 		<Box sx={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>{children}</Box>
-	// 	</Box>
-	// );
+const SOURCE_ORIGIN = 'https://ww4.gogoanime2.org';
+
+const PlayerWrapper = (props: PropsWithChildren<{ widthRatio?: number }>) => {
+	const { children, widthRatio } = props;
+	if (!widthRatio) return <Box sx={{ width: '100%', height: '360px' }}>{children}</Box>;
+	return (
+		<Box sx={{ position: 'relative', width: '100%', paddingTop: `${widthRatio}%` }}>
+			<Box sx={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>{children}</Box>
+		</Box>
+	);
 };
 
 const VideoPlayer = (props: { src: string }) => {
 	const { src } = props;
 	const ref = useRef<HTMLIFrameElement>(null);
 
+	const widthRation = (() => {
+		if (src.startsWith(SOURCE_ORIGIN)) return undefined;
+		return 56.5;
+	})();
+
 	return (
-		<PlayerWrapper>
+		<PlayerWrapper widthRatio={widthRation}>
 			<iframe
 				ref={ref}
 				key={src}
@@ -58,13 +65,12 @@ export const WatchView = () => {
 	const id = item?.id ?? '';
 	const code = item?.code ?? '';
 	const episode = item?.lastSeenEpisode ?? 1;
-	const sourceOrigin = 'https://ww4.gogoanime2.org';
 
 	const { key: updateItemKey, fn: updateItemFn } = watchItemQueries.updateWatchItem({ id });
 	const updateItemMutation = useMutation(updateItemKey, updateItemFn);
 
 	const sourceUrl = useMemo(() => {
-		return code ? `${sourceOrigin}/watch/${code}/${episode}` : null;
+		return code ? `${SOURCE_ORIGIN}/watch/${code}/${episode}` : null;
 	}, [code, episode]);
 
 	const { key: getHtmlKey, fn: getHtmlFn } = utilsQueries.getHtmlContent({ url: sourceUrl ?? '' });
@@ -80,7 +86,7 @@ export const WatchView = () => {
 		const iframe = dummy.querySelector('iframe#playerframe');
 		const src = iframe?.getAttribute('src') ?? '';
 
-		return src.startsWith('/') ? sourceOrigin + src : src;
+		return src.startsWith('/') ? SOURCE_ORIGIN + src : src;
 	}, [getHtmlQuery.data]);
 
 	const updateEpisode = (value: number) => {
