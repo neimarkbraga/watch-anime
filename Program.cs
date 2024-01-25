@@ -99,7 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowOriginPolicy");
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // serve public files
 app.UseStaticFiles(new StaticFileOptions
