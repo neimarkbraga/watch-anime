@@ -7,6 +7,7 @@ import { darkTheme } from './themes/darkTheme';
 import { queryClient } from './queryClient';
 import { DialogProvider } from './providers/DialogProvider';
 import { SessionProvider } from './providers/SessionProvider/SessionProvider';
+import { SignalRProvider } from './providers/SignalRProvider/SignalRProvider';
 import { MainHeader } from './components/MainHeader/MainHeader';
 import { AppRoutes } from './routes/AppRoutes';
 
@@ -16,14 +17,16 @@ function App() {
 			<ThemeProvider theme={darkTheme}>
 				<CssBaseline />
 				<GlobalStyle />
-				<DialogProvider>
-					<BrowserRouter>
-						<SessionProvider>
-							<MainHeader />
-							<AppRoutes />
-						</SessionProvider>
-					</BrowserRouter>
-				</DialogProvider>
+				<SignalRProvider>
+					<DialogProvider>
+						<BrowserRouter>
+							<SessionProvider>
+								<MainHeader />
+								<AppRoutes />
+							</SessionProvider>
+						</BrowserRouter>
+					</DialogProvider>
+				</SignalRProvider>
 			</ThemeProvider>
 		</QueryClientProvider>
 	);

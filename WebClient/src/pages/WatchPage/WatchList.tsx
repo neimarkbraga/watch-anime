@@ -1,5 +1,5 @@
 import { Fragment, useLayoutEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import {
 	Alert,
 	Box,
@@ -16,6 +16,7 @@ import { watchItemQueries } from '../../queries/watchItemQueries';
 import { AddWatchItemDialog } from './AddWatchItemDialog';
 import { getErrorMessage } from '../../libs/utils/getErrorMessage';
 import { useWatchPageContext } from './WatchPageContext';
+import { useSignalREventListener } from '../../providers/SignalRProvider/useSignalREventListener';
 
 export const WatchList = () => {
 	const [isAddItemOpen, setIsAddItemOpen] = useState<boolean>(false);
@@ -26,11 +27,26 @@ export const WatchList = () => {
 	const getItems = useWatchStore((s) => s.getItems);
 	const setItems = useWatchStore((s) => s.setItems);
 
+	const queryClient = useQueryClient();
+
 	const { key: getItemsKey, fn: getItemsFn } = watchItemQueries.getWatchItems();
 	const getItemsQuery = useQuery(getItemsKey, getItemsFn, {
 		cacheTime: Infinity,
 		staleTime: Infinity,
 		onSuccess: (data) => setItems(data)
+	});
+
+	useSignalREventListener('WatchItemUpdate', (payload) => {
+		if (queryClient.isMutating()) return;
+		const currentItems = getItems();
+		const exists = currentItems.find((w) => w.id === payload.id);
+		if (exists) setItems(currentItems.map((w) => (w.id === payload.id ? payload : w)));
+		else setItems([...currentItems, payload]);
+	});
+
+	useSignalREventListener('WatchItemDeleted', (payload) => {
+		if (queryClient.isMutating()) return;
+		setItems(getItems().filter((w) => w.id !== payload));
 	});
 
 	useLayoutEffect(() => {

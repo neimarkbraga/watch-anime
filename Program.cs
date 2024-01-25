@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using WatchAnime.Models;
 using WatchAnime.Services;
+using WatchAnime.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("Mo
 builder.Services.AddSingleton<MongoDBService>();
 builder.Services.AddSingleton<GoogleAuthService>();
 builder.Services.AddSingleton<GoogleRecaptchaService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
@@ -34,6 +37,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         };
     });
 
+builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("HubPolicy", policy =>
+        {
+            policy.RequireAuthenticatedUser();
+        });
+    });
 
 // Add services to the container.
 
@@ -70,12 +80,12 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowAnyOriginPolicy", builder =>
+        options.AddPolicy("AllowOriginPolicy", builder =>
             {
-
-                builder.AllowAnyOrigin();
-                builder.AllowAnyMethod();
-                builder.AllowAnyHeader();
+                builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
     });
 
@@ -86,11 +96,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowOriginPolicy");
 }
 
-// app.UseHttpsRedirection();
-
-app.UseCors("AllowAnyOriginPolicy");
+app.UseHttpsRedirection();
 
 // serve public files
 app.UseStaticFiles(new StaticFileOptions
@@ -129,6 +138,10 @@ app.UseExceptionHandler(errorApp =>
                 }
             });
     });
+
+// signalr
+app.MapHub<UpdateFeedHub>("/update-feed-hub")
+    .RequireAuthorization("HubPolicy");
 
 app.UseAuthentication();
 
